@@ -25,8 +25,8 @@ async function run() {
       try {
             await client.connect();
 
-            const userCollection = client.db('userbase').collection('users')
 
+            const userCollection = client.db('edublink').collection('users')
             
             app.post('/jwt', async (req, res) => {
                   const user = req.body;
