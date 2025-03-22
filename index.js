@@ -12,7 +12,7 @@ const port = process.env.PORT || 5000;
 
 
 // Mongobd Connect Start
-const { MongoClient, ServerApiVersion } = require('mongodb');
+const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
 const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@cluster0.sozmemk.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0`;
 const client = new MongoClient(uri, {
       serverApi: {
@@ -21,13 +21,18 @@ const client = new MongoClient(uri, {
             deprecationErrors: true,
       }
 });
+
+
 async function run() {
       try {
             await client.connect();
 
-
+            // Collection Section
             const userCollection = client.db('edublink').collection('users')
-            
+            const addCourseCollection = client.db('edublink').collection('course')
+            const addTeacherCollection = client.db('edublink').collection('teacher')
+
+            // JWT Token
             app.post('/jwt', async (req, res) => {
                   const user = req.body;
                   const token = jwt.sign(user, process.env.ACCESS_TOKEN, {
@@ -38,8 +43,7 @@ async function run() {
 
 
 
-
-
+            // User Related Data
             app.put("/users", async (req, res) => {
                   const user = req.body;
                   const query = { email: user?.email };
@@ -69,9 +73,62 @@ async function run() {
                   const result = await userCollection.findOne(query)
                   res.send(result)
             })
-
             app.get('/users', async (req, res) => {
                   const result = await userCollection.find().toArray();
+                  res.send(result)
+            })
+
+            app.delete('/users/:id', async (req, res) => {
+                  const id = req.params.id
+                  const query = { _id: new ObjectId(id) }
+                  const result = await userCollection.deleteOne(query)
+                  res.send(result)
+            })
+
+
+
+
+
+            // Admin & User Role Condition
+            app.patch('/users/admin/:id', async (req, res) => {
+                  const id = req.params.id
+                  const query = { _id: new ObjectId(id) }
+                  const updateDoc = {
+                        $set: {
+                              role: 'admin'
+                        }
+                  }
+                  const result = await userCollection.updateOne(query, updateDoc)
+                  res.send(result)
+            })
+
+
+
+
+            // Add Course Data
+            app.post('/course', async (req, res) => {
+                  const addCourse = req.body
+                  const result = await addCourseCollection.insertOne(addCourse)
+                  res.send(result)
+            })
+
+            app.get('/course', async (req, res) => {
+                  const result = await addCourseCollection.find().toArray()
+                  res.send(result)
+            })
+
+
+
+
+            // Add Teacher Data
+            app.post('/teacher', async (req, res) => {
+                  const addCourse = req.body
+                  const result = await addTeacherCollection.insertOne(addCourse)
+                  res.send(result)
+            })
+
+            app.get('/teacher', async (req, res) => {
+                  const result = await addTeacherCollection.find().toArray()
                   res.send(result)
             })
 
