@@ -29,7 +29,7 @@ async function run() {
 
             // Collection Section
             const userCollection = client.db('edublink').collection('users')
-            const addCourseCollection = client.db('edublink').collection('course')
+            const courseCollection = client.db('edublink').collection('course')
             const addTeacherCollection = client.db('edublink').collection('teacher')
 
             // JWT Token
@@ -108,12 +108,51 @@ async function run() {
             // Add Course Data
             app.post('/course', async (req, res) => {
                   const addCourse = req.body
-                  const result = await addCourseCollection.insertOne(addCourse)
+                  const result = await courseCollection.insertOne(addCourse)
                   res.send(result)
             })
 
             app.get('/course', async (req, res) => {
-                  const result = await addCourseCollection.find().toArray()
+                  const result = await courseCollection.find().toArray()
+                  res.send(result)
+            })
+
+            app.delete('/course/:id', async (req, res) => {
+                  const id = req.params.id
+                  const query = { _id: new ObjectId(id) }
+                  const result = await courseCollection.deleteOne(query)
+                  res.send(result)
+            })
+
+            app.patch("/course/:id", async (req, res) => {
+                  const item = req.body;
+                  const id = req.params.id;
+                  const filter = { _id: new ObjectId(id) };
+                  const updatedDoc = {
+                        $set: {
+                              title: item.title,
+                              description: item.description,
+                              category: item.category,
+                              level: item.level,
+                              price: item.price,
+                              duration: item.duration,
+                              instructorName: item.instructorName,
+                              email: item.email,
+                              image: item.image,
+                              enrollmentCount: item.enrollmentCount,
+                              language: item.language,
+                              lessons: item.lessons,
+                              submitDate: item.submitDate,
+                        },
+                  };
+                  const result = await courseCollection.updateOne(filter, updatedDoc);
+                  res.send(result);
+            });
+
+            app.get('/course/:id', async (req, res) => {
+                  const id = req.params.id;
+                  const query = { _id: new ObjectId(id) }
+                  const result = await courseCollection.findOne(query)
                   res.send(result)
             })
 
