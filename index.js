@@ -103,8 +103,6 @@ async function run() {
             })
 
 
-
-
             // Add Course Data
             app.post('/course', async (req, res) => {
                   const addCourse = req.body
@@ -156,22 +154,6 @@ async function run() {
                   res.send(result)
             })
 
-
-
-            app.get('/course/:id', async (req, res) => {
-                  const id = req.params.id;
-                  const query = { _id: new ObjectId(id) };
-                  const result = await courseCollection.findOne(query)
-                  res.send(result)
-            })
-
-
-
-
-
-
-
-
             // Add Teacher Data
             app.post('/teacher', async (req, res) => {
                   const addCourse = req.body
@@ -181,6 +163,38 @@ async function run() {
 
             app.get('/teacher', async (req, res) => {
                   const result = await addTeacherCollection.find().toArray()
+                  res.send(result)
+            })
+
+            app.delete('/teacher/:id', async (req, res) => {
+                  const id = req.params.id
+                  const query = { _id: new ObjectId(id) }
+                  const result = await addTeacherCollection.deleteOne(query)
+                  res.send(result)
+            });
+
+            app.patch("/teacher/:id", async (req, res) => {
+                  const item = req.body;
+                  const id = req.params.id;
+                  const filter = { _id: new ObjectId(id) };
+                  const updatedDoc = {
+                        $set: {
+                              teachername: item?.teachername,
+                              category: item?.category,
+                              experience: item?.experience,
+                              email: item?.email,
+                              date: item?.date,
+                              description: item?.description,
+                              image: item?.image
+                        },
+                  };
+                  const result = await addTeacherCollection.updateOne(filter, updatedDoc);
+                  res.send(result);
+            });
+            app.get('/teacher/:id', async (req, res) => {
+                  const id = req.params.id;
+                  const query = { _id: new ObjectId(id) }
+                  const result = await addTeacherCollection.findOne(query)
                   res.send(result)
             })
 
