@@ -224,7 +224,15 @@ async function run() {
 
             });
 
-
+            app.post("/payments", async (req, res) => {
+                  const payment = req.body;
+                  const paymentResult = await paymentsCollection.insertOne(payment);
+                  res.send(paymentResult)
+            });
+            app.get("/payments", async (req, res) => {
+                  const result = await paymentsCollection.find().toArray()
+                  res.send(result)
+            })
 
             // Check if the user already paid
             // app.get('/payments/check/:email', async (req, res) => {
