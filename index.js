@@ -229,24 +229,14 @@ async function run() {
                   const paymentResult = await paymentsCollection.insertOne(payment);
                   res.send(paymentResult)
             });
+
+
+
             app.get("/payments", async (req, res) => {
                   const result = await paymentsCollection.find().toArray()
                   res.send(result)
             })
 
-            // Check if the user already paid
-            // app.get('/payments/check/:email', async (req, res) => {
-            //       const { email } = req.params;
-            //       try {
-            //             const existingPayment = await Payment.findOne({ email });
-            //             if (existingPayment) {
-            //                   return res.json({ paid: true });
-            //             }
-            //             res.json({ paid: false });
-            //       } catch (err) {
-            //             res.status(500).json({ error: err.message });
-            //       }
-            // });
 
 
 
