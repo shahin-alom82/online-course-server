@@ -204,7 +204,6 @@ async function run() {
 
 
 
-            // Payment Related Data
             app.post("/create-payment-intent", async (req, res) => {
                   const { price } = req.body;
                   const amount = parseInt(price * 100);
@@ -231,12 +230,26 @@ async function run() {
             });
 
 
+            app.get("/payments/:email", async (req, res) => {
+                  const query = { email: req.params.email };
+                  try {
+                        const result = await paymentsCollection.find(query).toArray();
+                        res.send(result);
+                  } catch (error) {
+                        res.status(500).send({ message: "Internal server error" });
+                  }
+            });
 
-            app.get("/payments", async (req, res) => {
-                  const result = await paymentsCollection.find().toArray()
-                  res.send(result)
-            })
-
+            // Example route in Express
+            app.get('/check-payment', async (req, res) => {
+                  const { email, courseId } = req.query;
+                  const isPaid = await paymentsCollection.findOne({ email, 'course._id': courseId });
+                  if (isPaid) {
+                        return res.send({ paid: true });
+                  } else {
+                        return res.send({ paid: false });
+                  }
+            });
 
 
 
