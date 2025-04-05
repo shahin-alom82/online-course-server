@@ -1,7 +1,7 @@
 const express = require("express");
 const app = express();
 const cors = require('cors');
-app.use(cors());
+// app.use(cors());
 app.use(express.json());
 const jwt = require("jsonwebtoken");
 require('dotenv').config()
@@ -11,6 +11,12 @@ const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY)
 const port = process.env.PORT || 5000;
 
 
+const corsOptions = {
+      origin: ["http://localhost:5173", "http://localhost:5000"],
+      credentials: true,
+      optionSuccessStatus: 200,
+};
+app.use(cors(corsOptions));
 
 
 
