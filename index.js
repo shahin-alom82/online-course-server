@@ -240,16 +240,22 @@ async function run() {
                   }
             });
 
-            // Example route in Express
-            app.get('/check-payment', async (req, res) => {
-                  const { email, courseId } = req.query;
-                  const isPaid = await paymentsCollection.findOne({ email, 'course._id': courseId });
-                  if (isPaid) {
-                        return res.send({ paid: true });
-                  } else {
-                        return res.send({ paid: false });
-                  }
+            app.get("/admin-states", async (req, res) => {
+                  const users = await userCollection.estimatedDocumentCount();
+                  const courseItems = await courseCollection.estimatedDocumentCount();
+                  const orders = await paymentsCollection.estimatedDocumentCount();
+                  const payment = await paymentsCollection.find().toArray();
+                  // Total revenue calculation
+                  const totalRevenue = payment.reduce((total, item) => total + item.price, 0);
+                  const revenue = parseFloat(totalRevenue.toFixed(2));
+
+                  res.send({ users, courseItems, orders, revenue });
             });
+
+
+
+
+
 
 
 
